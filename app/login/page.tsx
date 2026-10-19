@@ -9,39 +9,128 @@ export default function Login() {
   const [busy, setBusy] = useState(false);
   const { login, user, ready } = useAuth();
   const r = useRouter();
-  useEffect(() => { if (ready && user) r.replace("/tabungan"); }, [ready, user, r]);
+
+  useEffect(() => {
+    if (ready && user) r.replace("/tabungan");
+  }, [ready, user, r]);
 
   async function submit(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
     const fd = new FormData(ev.currentTarget);
-    const email = fd.get("email"), password = fd.get("password");
+    const email = fd.get("email");
+    const password = fd.get("password");
     setBusy(true);
     try {
       if (mode === "register") {
-        await api("/api/register", { method: "POST", body: { username: fd.get("username"), email, password, role: fd.get("role") } });
-        toast("Akun dibuat");
+        await api("/api/register", {
+          method: "POST",
+          body: {
+            username: fd.get("username"),
+            email,
+            password,
+            role: fd.get("role"),
+          },
+        });
+        toast("Akun berhasil didaftarkan");
       }
-      await login(await api("/api/login", { method: "POST", body: { email, password } }));
-    } catch (e: any) { toast(e.message, true); }
+      await login(
+        await api("/api/login", {
+          method: "POST",
+          body: { email, password },
+        })
+      );
+    } catch (e: any) {
+      toast(e.message, true);
+    }
     setBusy(false);
   }
 
-  const l = mode === "login";
+  const isLogin = mode === "login";
+
   return (
     <div className="auth">
-      <div className="brand" style={{ fontSize: 34 }}>Celengan</div>
-      <p className="mut">Catat tabungan dan capai targetmu.</p>
+      <div className="auth-header">
+        <div className="brand" style={{ fontSize: "32px", fontWeight: 700 }}>
+          Celengan
+        </div>
+        <p className="mut sm" style={{ margin: "6px 0 0" }}>
+          Kelola tabungan & wujudkan target finansial Anda.
+        </p>
+      </div>
+
       <div className="card">
         <div className="tabs">
-          <button className={l ? "on" : ""} onClick={() => setMode("login")}>Masuk</button>
-          <button className={l ? "" : "on"} onClick={() => setMode("register")}>Daftar</button>
+          <button
+            type="button"
+            className={isLogin ? "on" : ""}
+            onClick={() => setMode("login")}
+          >
+            Masuk
+          </button>
+          <button
+            type="button"
+            className={!isLogin ? "on" : ""}
+            onClick={() => setMode("register")}
+          >
+            Daftar Akun
+          </button>
         </div>
+
         <form onSubmit={submit} key={mode}>
-          {!l && <><label>Username</label><input name="username" required /></>}
-          <label>Email</label><input type="email" name="email" required />
-          <label>Password</label><input type="password" name="password"  />
-          {!l && <><label>Daftar sebagai</label><select name="role" defaultValue="user"><option value="user">User</option><option value="admin">Admin</option></select></>}
-          <div className="row"><button className="btn pri" type="submit" style={{ flex: 1 }} disabled={busy}>{l ? "Masuk" : "Buat akun"}</button></div>
+          {!isLogin && (
+            <>
+              <label>Username</label>
+              <input
+                name="username"
+                placeholder="Nama pengguna"
+                required
+                autoComplete="username"
+              />
+            </>
+          )}
+
+          <label>Email</label>
+          <input
+            type="email"
+            name="email"
+            placeholder="nama@email.com"
+            required
+            autoComplete="email"
+          />
+
+          <label>Password</label>
+          <input
+            type="password"
+            name="password"
+            placeholder="••••••••"
+            required
+            autoComplete={isLogin ? "current-password" : "new-password"}
+          />
+
+          {!isLogin && (
+            <>
+              <label>Daftar Sebagai</label>
+              <select name="role" defaultValue="user">
+                <option value="user">Pengguna (User)</option>
+                <option value="admin">Administrator</option>
+              </select>
+            </>
+          )}
+
+          <div className="row" style={{ marginTop: "22px" }}>
+            <button
+              className="btn pri"
+              type="submit"
+              style={{ width: "100%", padding: "11px" }}
+              disabled={busy}
+            >
+              {busy
+                ? "Memproses…"
+                : isLogin
+                ? "Masuk ke Akun"
+                : "Buat Akun Sekarang"}
+            </button>
+          </div>
         </form>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { Avatar } from "@/app/components/ui";
+import { LogOutIcon } from "@/app/components/Icons";
 
 export default function Shell({ children }: { children: React.ReactNode }) {
   const { user, ready, logout } = useAuth();
@@ -24,10 +25,14 @@ export default function Shell({ children }: { children: React.ReactNode }) {
     ["/profil", "Profil"],
     ...(user.role === "admin" ? [["/users", "Pengguna"]] : []),
   ];
+
   return (
     <>
       <header className="top">
-        <div className="brand">Celengan</div>
+        <Link href="/tabungan" style={{ textDecoration: "none" }}>
+          <span className="brand">Celengan</span>
+        </Link>
+
         <nav>
           {nav.map(([h, n]) => (
             <Link key={h} href={h}>
@@ -35,10 +40,17 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             </Link>
           ))}
         </nav>
+
         <div className="me">
-          <Avatar u={user} />
-          <span>{user.username}</span>
-          <button className="btn" onClick={logout}>Keluar</button>
+          <div className="user-chip">
+            <Avatar u={user} />
+            <span className="user-name-text">{user.username}</span>
+            {user.role === "admin" && <span className="pill admin" style={{ fontSize: "11px", padding: "1px 6px" }}>Admin</span>}
+          </div>
+          <button className="btn sm" onClick={logout} title="Keluar">
+            <LogOutIcon className="w-4 h-4" />
+            <span className="user-name-text">Keluar</span>
+          </button>
         </div>
       </header>
       <main>{children}</main>
