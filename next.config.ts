@@ -15,6 +15,15 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  // Teruskan /api/* ke backend, jadi tidak perlu CORS
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: `${process.env.API_URL || "https://backend-project-aplikasi-nabung.vercel.app"}/api/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
