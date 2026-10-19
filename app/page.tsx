@@ -9,3 +9,4 @@ export default function Home() {
   useEffect(() => { if (ready) r.replace(user ? "/tabungan" : "/login"); }, [ready, user, r]);
   return null;
 }
+
