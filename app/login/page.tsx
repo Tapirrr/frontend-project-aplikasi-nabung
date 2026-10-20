@@ -107,7 +107,7 @@ export default function Login() {
             autoComplete={isLogin ? "current-password" : "new-password"}
           />
 
-          {!isLogin && (
+          {/* {!isLogin && (
             <>
               <label>Daftar Sebagai</label>
               <select name="role" defaultValue="user">
@@ -115,7 +115,7 @@ export default function Login() {
                 <option value="admin">Administrator</option>
               </select>
             </>
-          )}
+          )} */}
 
           <div className="row" style={{ marginTop: "22px" }}>
             <button
